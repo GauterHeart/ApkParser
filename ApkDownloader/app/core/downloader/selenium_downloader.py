@@ -1,5 +1,10 @@
+import glob
+import os
+
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+
+from app.core.namespace import DownloadNS
 
 from .base import Downloader
 
@@ -18,3 +23,10 @@ class SeleniumDownloader(Downloader):
 
     def download(self, url: str) -> None:
         self.__driver.get(url=url)
+        files = glob.glob("{}{}".format(DownloadNS.DIR.value, "/*"))
+        latest_file = max(files, key=os.path.getctime)
+        new_path = latest_file.replace(
+            latest_file.split("/")[-1].split(".")[0],
+            "{}{}".format(url.split(DownloadNS.BASE_URL.value)[1], ".apk"),
+        )
+        os.rename(latest_file, new_path)

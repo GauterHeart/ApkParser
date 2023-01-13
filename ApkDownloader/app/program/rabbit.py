@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from app.controller.v1.handler import DownloadHandler
 from app.controller.v1.rabbit import (
@@ -6,6 +7,7 @@ from app.controller.v1.rabbit import (
     DownloadSeleniumRabbitController,
 )
 from app.core.downloader import ParseDownloader, SeleniumDownloader
+from app.core.namespace import DownloadNS
 from app.pkg.arch import AppABC
 from app.program.app import BaseApp
 
@@ -21,7 +23,9 @@ class RabbitDownloadSeleniumV1App(BaseApp, AppABC):
             password=self._config.RABBIT_PASSWORD,
             queue_name=self._config.RABBIT_QUEUE_DOWNLOAD_SELENIUM,
             handler=DownloadHandler(
-                downloader=SeleniumDownloader(path=self._config.DOWNLOADER_PATH)
+                downloader=SeleniumDownloader(
+                    path="{}{}".format(os.path.abspath("./"), DownloadNS.DIR.value)
+                )
             ),
             status_handler=self._rabbit_status_handler,
         )
