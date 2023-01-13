@@ -41,6 +41,9 @@ class Setting(_Setting):
     RABBIT_QUEUE_DOWNLOAD_SELENIUM: str
     RABBIT_QUEUE_DOWNLOAD: str
 
+    # downloader
+    DOWNLOADER_PATH: str
+
     # program
     PROGRAM: Optional[str] = None
 
