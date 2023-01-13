@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from pydantic import HttpUrl
 
 from app.crud import PostgresCRUD
-from selenium import webdriver
+# from selenium import webdriver
 
 from .main import Parser
 

@@ -1,5 +1,6 @@
 import glob
 import os
+from typing import Optional
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -10,6 +11,9 @@ from .base import Downloader
 
 
 class SeleniumDownloader(Downloader):
+
+    __driver: Optional[webdriver.Firefox] = None
+
     def __init__(self, path: str) -> None:
         self.__path = path
         self.__driver = webdriver.Firefox(options=self.__init_driver_options())
@@ -22,6 +26,9 @@ class SeleniumDownloader(Downloader):
         return options
 
     def download(self, url: str) -> None:
+        if self.__driver is None:
+            self.__driver = webdriver.Firefox(options=self.__init_driver_options())
+
         self.__driver.get(url=url)
         files = glob.glob("{}{}".format(DownloadNS.DIR.value, "/*"))
         latest_file = max(files, key=os.path.getctime)

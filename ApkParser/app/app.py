@@ -16,6 +16,7 @@ class App:
         for p in self.__program():
             if p.name == self._config.PROGRAM:
                 return p()
+
         return None
 
     def run(self) -> None:
