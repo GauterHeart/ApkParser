@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "apkdownloader"
+version = "0.1.0"
+description = ""
+authors = ["GauterHeart <gauterheart@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-dotenv = "^0.21.0"
+aio-pika = "^8.3.0"
+selenium = "^4.7.2"
+fastapi = "^0.89.1"
+loguru = "^0.6.0"
+ujson = "^5.7.0"
+
+
+[tool.poetry.group.dev.dependencies]
+yoyo-migrations = "^8.2.0"
+mypy = "^0.991"
+flake8 = "^6.0.0"
+black = "^22.12.0"
+isort = "^5.11.4"
+types-ujson = "^5.7.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.mypy]
+disallow_untyped_defs = true
+exclude = "venv|tests"
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+
+[tool.black]
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
