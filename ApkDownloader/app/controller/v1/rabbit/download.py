@@ -27,6 +27,34 @@ class DownloadSeleniumRabbitController(RabbitConsumer):
 
     async def run(self) -> None:
         await self._broker(
-            func=self.__handler.selenium,
+            func=self.__handler.execute,
+            model=DownloadSchema,
+        )
+
+
+class DownloadParseRabbitController(RabbitConsumer):
+    def __init__(
+        self,
+        queue_name: str,
+        username: str,
+        password: str,
+        host: str,
+        port: int,
+        handler: DownloadHandler,
+        status_handler: RabbitStatusHandler,
+    ) -> None:
+        super().__init__(
+            queue_name=queue_name,
+            username=username,
+            password=password,
+            host=host,
+            port=port,
+            status_handler=status_handler,
+        )
+        self.__handler = handler
+
+    async def run(self) -> None:
+        await self._broker(
+            func=self.__handler.execute,
             model=DownloadSchema,
         )

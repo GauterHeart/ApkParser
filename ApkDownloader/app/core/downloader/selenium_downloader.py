@@ -1,8 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
+from .base import Downloader
 
-class SeleniumDownloader:
+
+class SeleniumDownloader(Downloader):
     def __init__(self, path: str) -> None:
         self.__path = path
         self.__driver = webdriver.Firefox(options=self.__init_driver_options())
@@ -15,4 +17,4 @@ class SeleniumDownloader:
         return options
 
     def download(self, url: str) -> None:
-        ...
+        self.__driver.get(url=url)

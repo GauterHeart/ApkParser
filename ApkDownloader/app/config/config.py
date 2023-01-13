@@ -19,8 +19,8 @@ class RunType(Enum):
 
 class RunProgram(Enum):
     HTTP = "http"
-    PARSER_V1 = "parser_v1"
-    TEST_PARSER_V1 = "test_parser_v1"
+    RABBIT_SELENIUM_V1 = "rabbit_selenium_v1"
+    RABBIT_PARSE_V1 = "rabbit_parse_v1"
 
     def __str__(self) -> str:
         return self.value
@@ -39,7 +39,7 @@ class Setting(_Setting):
     RABBIT_USER: str
     RABBIT_PASSWORD: str
     RABBIT_QUEUE_DOWNLOAD_SELENIUM: str
-    RABBIT_QUEUE_DOWNLOAD: str
+    RABBIT_QUEUE_DOWNLOAD_PARSE: str
 
     # downloader
     DOWNLOADER_PATH: str

@@ -1,3 +1,3 @@
-from .download import DownloadSeleniumRabbitController
+from .download import DownloadParseRabbitController, DownloadSeleniumRabbitController
 
-__all__ = ["DownloadSeleniumRabbitController"]
+__all__ = ["DownloadSeleniumRabbitController", "DownloadParseRabbitController"]
