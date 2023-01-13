@@ -34,7 +34,7 @@ class Parser:
             effect = await client.post(url="{}{}".format(self.__url, route))
             return effect
 
-    async def __add_base_link(self, page: int) -> List[str]:
+    async def _add_base_link(self, page: int) -> List[str]:
         """
         Parse Table Page
         """
@@ -47,7 +47,7 @@ class Parser:
 
         return arr
 
-    async def __version_link(self, route: str) -> List[str]:
+    async def _version_link(self, route: str) -> List[str]:
         """
         Parse version distro
         """
@@ -56,7 +56,7 @@ class Parser:
         href = soup.select("a[class='accent_color']")
         return [h["href"] for h in href if h["href"] != "/faq/"]
 
-    async def __download_link(self, route: str) -> str:
+    async def _download_link(self, route: str) -> str:
         """
         Get download link
         """
@@ -72,12 +72,12 @@ class Parser:
         page = 1
         arr_download: List[str] = []
         while len(arr_download) < self.__link_len:
-            arr_base_link = await self.__add_base_link(page=page)
+            arr_base_link = await self._add_base_link(page=page)
             arr_base_link = arr_base_link
             arr_version_link: List[str] = []
             for a in arr_base_link:
                 try:
-                    arr = await self.__version_link(route=a)
+                    arr = await self._version_link(route=a)
                 except httpx.ConnectError:
                     arr.extend([])  # remove(for test)
                     continue
@@ -86,7 +86,7 @@ class Parser:
 
             for a in arr_version_link:
                 try:
-                    tmp = await self.__download_link(route=a)
+                    tmp = await self._download_link(route=a)
                 except httpx.ConnectError:
                     arr_download.append("")  # remove(for test)
                     continue
