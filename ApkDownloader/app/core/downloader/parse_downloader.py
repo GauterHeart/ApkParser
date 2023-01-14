@@ -7,11 +7,13 @@ from bs4 import BeautifulSoup
 from app.core.namespace import DownloadNS
 
 from .base import Downloader
+from .crud import PostgresDownloaderCRUD
 
 
 class ParseDownloader(Downloader):
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, crud_p: PostgresDownloaderCRUD) -> None:
         self.__url = url
+        self.__crud_p = crud_p
 
     def _make_request(self, url: str) -> httpx.Response:
         with httpx.Client() as client:
@@ -33,8 +35,8 @@ class ParseDownloader(Downloader):
             return
 
         name = uuid4().__str__()
-        filename = ".{}/{}{}".format(DownloadNS.DIR.name, name, ".apk")
-        archive = ".{}/{}{}".format(DownloadNS.DIR.name, name, ".7z")
+        filename = ".{}/{}{}".format(DownloadNS.DIR.value, name, ".apk")
+        archive = ".{}/{}{}".format(DownloadNS.DIR.value, name, ".7z")
         self._download_file(
             url=effect.headers["location"],
             filename=filename,
@@ -42,3 +44,11 @@ class ParseDownloader(Downloader):
         os.system(f"7z a {archive} {filename}")
         file_size = os.stat(f"{filename}").st_size
         archive_size = os.stat(f"{archive}").st_size
+
+        self.__crud_p.download.create(
+            url=url,
+            filename=filename,
+            archive=archive,
+            file_size=file_size,
+            archive_size=archive_size,
+        )

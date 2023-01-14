@@ -45,7 +45,10 @@ class RabbitDownloadParseV1App(BaseApp, AppABC):
             password=self._config.RABBIT_PASSWORD,
             queue_name=self._config.RABBIT_QUEUE_DOWNLOAD_PARSE,
             handler=DownloadHandler(
-                downloader=ParseDownloader(url=self._config.APK_URL)
+                downloader=ParseDownloader(
+                    url=self._config.APK_URL,
+                    crud_p=self._crud_downloader.init_postgres_crud(),
+                )
             ),
             status_handler=self._rabbit_status_handler,
         )
