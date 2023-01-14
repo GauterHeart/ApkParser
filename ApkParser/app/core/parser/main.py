@@ -1,12 +1,17 @@
 import asyncio
 from pprint import pprint
-from typing import List
+from typing import AsyncIterator, List
 
 import httpx
 from bs4 import BeautifulSoup
 from pydantic import HttpUrl
 
 from app.crud import PostgresCRUD
+
+
+async def _inner_iterator(spell: List[str]) -> AsyncIterator[str]:
+    for s in spell:
+        yield s
 
 
 class Parser:
@@ -38,14 +43,10 @@ class Parser:
         """
         Parse Table Page
         """
-        arr: List[str] = []
         effect = await self._make_request(route=f"/uploads/page/{page}/")
         soup = BeautifulSoup(effect.text, "lxml")
-        e_1 = soup.select("a[class='downloadLink']")
-        for j in e_1:
-            arr.append(j["href"])
-
-        return arr
+        e = soup.select("a[class='downloadLink']")
+        return ["/".join(i["href"].split("/")[:-2]) for i in e]
 
     async def _version_link(self, route: str) -> List[str]:
         """
@@ -53,7 +54,7 @@ class Parser:
         """
         effect = await self._make_request(route=route)
         soup = BeautifulSoup(effect.text, "lxml")
-        href = soup.select("a[class='accent_color']")
+        href = soup.find(id="primary").select("a[class='downloadLink']")
         return [h["href"] for h in href if h["href"] != "/faq/"]
 
     async def _download_link(self, route: str) -> str:
@@ -61,21 +62,36 @@ class Parser:
         Get download link
         """
         effect = await self._make_request(route=route)
+        if effect.status_code == 302:
+            return await self._download_link(route=effect.headers["location"])
+
         soup = BeautifulSoup(effect.text, "lxml")
         href = soup.find("a", {"class": "downloadButton"})
         if href is None:
             return ""
 
-        return href["href"]
+        href = href["href"]
+        if href == "#downloads":
+            lst = soup.find("div", {"class": "listWidget"}).select(
+                "a[class='accent_color']"
+            )
+            href_lst = [i['href'] for i in lst if i['href'] != '/faq/']
+            return await self._download_link(route=href_lst[0])
+
+        return href
 
     async def __parser(self) -> None:
         page = 1
         arr_download: List[str] = []
         while len(arr_download) < self.__link_len:
             arr_base_link = await self._add_base_link(page=page)
-            arr_base_link = arr_base_link
+            # arr_base_link = [
+            #     "/apk/apna/apna-job-search-india-vacancy-alert-online-work/",
+            #     "/apk/telecom-international-myanmar-company-limited/myid-your-digital-hub/",
+            # ]
             arr_version_link: List[str] = []
-            for a in arr_base_link:
+            async for a in _inner_iterator(arr_base_link):
+                await asyncio.sleep(1)
                 try:
                     arr = await self._version_link(route=a)
                 except httpx.ConnectError:
@@ -84,7 +100,9 @@ class Parser:
 
                 arr_version_link.extend(arr)
 
-            for a in arr_version_link:
+            # arr_version_link = [arr_version_link[0], arr_version_link[-1]]
+            async for a in _inner_iterator(arr_version_link):
+                await asyncio.sleep(1)
                 try:
                     tmp = await self._download_link(route=a)
                 except httpx.ConnectError:
@@ -93,12 +111,7 @@ class Parser:
 
                 arr_download.append(tmp)
 
-            print("=========")
             pprint(arr_download)
-            print("LEN = ", len(arr_download))
-            arr_download = list(
-                filter(lambda x: x != "" or x != "#downloads", arr_download)
-            )
             page += 1
 
         arr_download = list(map(lambda x: "{}{}".format(self.__url, x), arr_download))
