@@ -20,7 +20,6 @@ class RunType(Enum):
 class RunProgram(Enum):
     HTTP = "http"
     PARSER_V1 = "parser_v1"
-    TEST_PARSER_V1 = "test_parser_v1"
 
     def __str__(self) -> str:
         return self.value
