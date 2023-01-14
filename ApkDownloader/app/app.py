@@ -2,7 +2,7 @@ from typing import List, Optional, Type
 
 from app.config.config import get_settings
 from app.pkg.arch.program import AppABC
-from app.program import RabbitDownloadParseV1App, RabbitDownloadSeleniumV1App
+from app.program import RabbitDownloadParseV1App, RabbitDownloadSeleniumV1App, HttpApp
 
 
 class App:
@@ -10,7 +10,7 @@ class App:
     _config = get_settings()
 
     def __program(self) -> List[Type[AppABC]]:
-        return [RabbitDownloadSeleniumV1App, RabbitDownloadParseV1App]
+        return [RabbitDownloadSeleniumV1App, RabbitDownloadParseV1App, HttpApp]
 
     def __app(self) -> Optional[AppABC]:
         for p in self.__program():

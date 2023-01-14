@@ -1,6 +1,7 @@
 from cryptography.fernet import Fernet
 
 from app.config.config import get_settings
+from app.controller.v1.handler import FileHandler
 from app.core.auth import AuthService
 from app.core.downloader.crud import FactoryDownloaderCrud
 from app.core.initer import IniterService
@@ -49,6 +50,8 @@ class BaseApp:
             user=_config.POSTGRES_USER,
         )
     )
+
+    _file_handler = FileHandler(crud_p=_crud.init_postgres_crud())
 
     _auth_service = AuthService(
         crud_p=_crud.init_postgres_crud(),
