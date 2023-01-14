@@ -12,6 +12,8 @@ class ParserV1App(BaseApp, AppABC):
             crud_p=self._crud.init_postgres_crud(),
             url=self._config.APK_URL,
             link_len=self._config.LINK_LEN,
+            rabbit=self._rabbit_publisher,
+            queue_download=self._config.RABBIT_QUEUE_DOWNLOAD,
         )
 
     def run(self) -> None:

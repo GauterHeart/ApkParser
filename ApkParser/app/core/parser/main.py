@@ -7,6 +7,9 @@ from bs4 import BeautifulSoup
 from pydantic import HttpUrl
 
 from app.crud import PostgresCRUD
+from app.pkg.rabbit import RabbitPublisher
+
+from .model import ParserDownloadModel
 
 
 async def _inner_iterator(spell: List[str]) -> AsyncIterator[str]:
@@ -25,10 +28,21 @@ class Parser:
     7. a = accent_bg btn btn-flat downloadButton TBL
     """
 
-    def __init__(self, crud_p: PostgresCRUD, url: HttpUrl, link_len: int) -> None:
+    def __init__(
+        self,
+        crud_p: PostgresCRUD,
+        rabbit: RabbitPublisher,
+        queue_download: str,
+        url: HttpUrl,
+        link_len: int,
+    ) -> None:
         self.__crud_p = crud_p
         self.__url = url
         self.__link_len = link_len
+        self.__rabbit = rabbit
+        self.__queue_download = queue_download
+
+        asyncio.run(self.__rabbit.init_connection())
 
     def run(self) -> None:
         asyncio.run(self.__parser())
@@ -75,7 +89,7 @@ class Parser:
             lst = soup.find("div", {"class": "listWidget"}).select(
                 "a[class='accent_color']"
             )
-            href_lst = [i['href'] for i in lst if i['href'] != '/faq/']
+            href_lst = [i["href"] for i in lst if i["href"] != "/faq/"]
             return await self._download_link(route=href_lst[0])
 
         return href
@@ -115,3 +129,6 @@ class Parser:
             page += 1
 
         arr_download = list(map(lambda x: "{}{}".format(self.__url, x), arr_download))
+        await self.__rabbit.publish(
+            msg=ParserDownloadModel(link=arr_download), queue=self.__queue_download
+        )

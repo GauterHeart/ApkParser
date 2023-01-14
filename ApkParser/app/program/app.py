@@ -6,6 +6,7 @@ from app.core.auth import AuthService
 from app.core.initer import IniterService
 from app.crud import FactoryCrud
 from app.pkg.database import Postgresql, Redis, SyncPostgresql
+from app.pkg.rabbit import RabbitPublisher
 
 
 class BaseApp:
@@ -37,6 +38,10 @@ class BaseApp:
             password=_config.REDIS_PASSWORD,
             db=_config.REDIS_DB,
         ),
+    )
+    _rabbit_publisher = RabbitPublisher(
+        dsn=f"amqp://{_config.RABBIT_USER}:{_config.RABBIT_PASSWORD}"
+        + f"@{_config.RABBIT_HOST}{_config.RABBIT_PORT}/"
     )
 
     _link_handler = LinkHandler(crud_p=_crud.init_postgres_crud())

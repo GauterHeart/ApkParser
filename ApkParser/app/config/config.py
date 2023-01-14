@@ -38,17 +38,26 @@ class Setting(_Setting):
     PORT: int
     WORKER: int
 
+    # Postgres
     POSTGRES_HOST: str
     POSTGRES_PORT: int
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
 
+    # Redis
     REDIS_HOST: str
     REDIS_PORT: int
     REDIS_DB: str
     REDIS_USER: str
     REDIS_PASSWORD: str
+
+    # Rabbit
+    RABBIT_HOST: str
+    RABBIT_PORT: int
+    RABBIT_USER: str
+    RABBIT_PASSWORD: str
+    RABBIT_QUEUE_DOWNLOAD: str
 
     # Parser
     APK_URL: HttpUrl
