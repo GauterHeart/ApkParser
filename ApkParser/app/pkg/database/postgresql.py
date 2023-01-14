@@ -33,6 +33,11 @@ class Postgresql:
             async with conn.transaction():
                 await conn.execute(query, *args)
 
+    async def executemany(self, query: str, *args: Any) -> None:
+        async with self.__create_connector() as conn:
+            async with conn.transaction():
+                await conn.executemany(query, *args)
+
     async def fetchrow(self, query: str, *args: Any) -> dict:
         async with self.__create_connector() as conn:
             async with conn.transaction():

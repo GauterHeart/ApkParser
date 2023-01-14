@@ -16,12 +16,15 @@ class LinkCRUD:
         """
         await self.__cursor.execute(query, link)
 
+    async def batch_create(self, link: List[str]) -> None:
+        query = """
+            insert into link(link) values($1);
+        """
+        await self.__cursor.executemany(query, *link)
+
     async def fetch(self, link: str) -> List[LinkModel]:
         query = """
             select * from link where link like $1;
         """
         effect = await self.__cursor.fetch(query, f"%{link}%")
         return [LinkModel(**e) for e in effect]
-
-    async def batch_create(self, link: List[HttpUrl]) -> None:
-        ...

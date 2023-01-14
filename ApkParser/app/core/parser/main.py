@@ -128,7 +128,14 @@ class Parser:
             pprint(arr_download)
             page += 1
 
-        arr_download = list(map(lambda x: "{}{}".format(self.__url, x), arr_download))
+        arr_download = ['/aa', '/bb']
+
+        arr_download = list(
+            map(lambda x: "{}{}".format(self.__url, x), arr_download)
+        )
+        print(arr_download)
+
+        await self.__crud_p.link.batch_create(link=arr_download)
         await self.__rabbit.publish(
             msg=ParserDownloadModel(link=arr_download), queue=self.__queue_download
         )
