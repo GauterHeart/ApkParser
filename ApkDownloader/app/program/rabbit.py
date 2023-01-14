@@ -44,7 +44,9 @@ class RabbitDownloadParseV1App(BaseApp, AppABC):
             username=self._config.RABBIT_USER,
             password=self._config.RABBIT_PASSWORD,
             queue_name=self._config.RABBIT_QUEUE_DOWNLOAD_PARSE,
-            handler=DownloadHandler(downloader=ParseDownloader()),
+            handler=DownloadHandler(
+                downloader=ParseDownloader(url=self._config.APK_URL)
+            ),
             status_handler=self._rabbit_status_handler,
         )
 

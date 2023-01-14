@@ -4,7 +4,7 @@ from functools import lru_cache
 from typing import Optional
 
 from dotenv import find_dotenv
-from pydantic import BaseSettings
+from pydantic import BaseSettings, HttpUrl
 
 __all__ = ["get_settings"]
 
@@ -40,6 +40,9 @@ class Setting(_Setting):
     RABBIT_PASSWORD: str
     RABBIT_QUEUE_DOWNLOAD_SELENIUM: str
     RABBIT_QUEUE_DOWNLOAD_PARSE: str
+
+    # Downloader
+    APK_URL: HttpUrl
 
     # program
     PROGRAM: Optional[str] = None
