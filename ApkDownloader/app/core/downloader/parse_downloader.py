@@ -43,12 +43,12 @@ class ParseDownloader(Downloader):
         )
         os.system(f"yes 'y' | 7z x {filename} -o{folder}")
         file_size = os.stat(f"{filename}").st_size
-        archive_size = os.stat(f"{folder}").st_size
+        folder_size = int(os.popen(f"du -s {folder}").read().split("\t")[0])
 
         self.__crud_p.download.create(
             url=url,
             filename=filename,
-            archive=folder,
+            folder=folder,
             file_size=file_size,
-            archive_size=archive_size,
+            folder_size=folder_size,
         )

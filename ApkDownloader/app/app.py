@@ -2,7 +2,7 @@ from typing import List, Optional, Type
 
 from app.config.config import get_settings
 from app.pkg.arch.program import AppABC
-from app.program import RabbitDownloadParseV1App, RabbitDownloadSeleniumV1App, HttpApp
+from app.program import HttpApp, RabbitDownloadParseV1App, RabbitDownloadSeleniumV1App
 
 
 class App:

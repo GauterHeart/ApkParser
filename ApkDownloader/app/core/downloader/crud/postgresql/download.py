@@ -6,29 +6,29 @@ class DownloadCRUD:
         self.__cursor = cursor
 
     def create(
-        self, url: str, filename: str, archive: str, file_size: int, archive_size: int
+        self, url: str, filename: str, folder: str, file_size: int, folder_size: int
     ) -> None:
         query = """
             insert into download(
                     url,
                     filename,
-                    archive,
+                    folder,
                     file_size,
-                    archive_size)
+                    folder_size)
             values(
                 '%(url)s',
                 '%(filename)s',
-                '%(archive)s',
+                '%(folder)s',
                 %(file_size)s,
-                %(archive_size)s);
+                %(folder_size)s);
         """
         self.__cursor.execute(
             query=query,
             arg={
                 "url": url,
                 "filename": filename,
-                "archive": archive,
+                "folder": folder,
                 "file_size": file_size,
-                "archive_size": archive_size,
+                "folder_size": folder_size,
             },
         )

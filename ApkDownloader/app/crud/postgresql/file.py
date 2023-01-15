@@ -12,5 +12,5 @@ class FileCRUD:
         query = """
             select * from download where url like $1;;
         """
-        effect = await self.__cursor.fetch(query, f'%{link}%')
+        effect = await self.__cursor.fetch(query, f"%{link}%")
         return [DownloadModel(**e) for e in effect]

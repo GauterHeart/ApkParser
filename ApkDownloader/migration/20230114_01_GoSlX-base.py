@@ -13,9 +13,9 @@ steps = [
             id bigserial primary key unique,
             url varchar(2048) not null,
             filename varchar(512) not null,
-            archive varchar(512) not null,
+            folder varchar(512) not null,
             file_size bigint not null,
-            archive_size bigint not null,
+            folder_size bigint not null,
             date_create timestamp default now())
          """,
         "drop table download",
