@@ -1,3 +1,3 @@
-from .base import BaseAuthSchema
+from .base import BaseSchema
 
-__all__ = ["BaseAuthSchema"]
+__all__ = ["BaseSchema"]

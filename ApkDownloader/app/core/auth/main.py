@@ -4,6 +4,7 @@ from time import time
 
 from cryptography.fernet import Fernet
 from fastapi import Header, Request
+from pydantic import parse_obj_as
 
 from app.core.namespace import LifeCycleNS
 from app.crud import PostgresCRUD, RedisCRUD
@@ -12,6 +13,8 @@ from app.pkg.exception import (
     InvalidCredentialException,
     UnixtimeExpiredException,
 )
+
+from .model import AuthSchema
 
 
 class AuthService:
@@ -52,22 +55,23 @@ class AuthService:
         if new_signature != signature:
             raise InvalidCredentialException()
 
-    async def validate_id(self, req: Request, id: str = Header(...)) -> None:
+    async def validate_id(self, req: Request) -> None:
 
         data = await req.json()
-        if "unixtime" not in data:
+        try:
+            model = parse_obj_as(AuthSchema, data)
+        except Exception:
             raise InvalidCredentialException()
 
-        unixtime = data["unixtime"]
-        if int(unixtime) + LifeCycleNS.UNIXTIME.value < int(time()):
+        if int(model.unixtime) + LifeCycleNS.UNIXTIME.value < int(time()):
             raise UnixtimeExpiredException()
 
-        effect = await self.__crud_r.auth.get(request_id=id)
+        effect = await self.__crud_r.auth.get(request_id=model.id)
         if effect is not None:
             raise IdAlreadyExistException()
 
         await self.__crud_r.auth.create(
-            request_id=id,
-            unixtime=unixtime,
+            request_id=model.id,
+            unixtime=model.unixtime,
             expire=LifeCycleNS.REQUEST_ID.value,
         )

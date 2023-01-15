@@ -1,11 +1,11 @@
 from pydantic import Field, HttpUrl
 
-from app.core.schema import BaseAuthSchema
+from app.core.schema import BaseSchema
 
 
-class LinkCreateSchema(BaseAuthSchema):
+class LinkCreateSchema(BaseSchema):
     link: HttpUrl
 
 
-class LinkFetchSchema(BaseAuthSchema):
+class LinkFetchSchema(BaseSchema):
     link: str = Field(..., max_length=2048)

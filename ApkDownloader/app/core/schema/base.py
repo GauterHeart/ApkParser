@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
+from app.core.auth.model import AuthSchema
 
 
-class BaseAuthSchema(BaseModel):
-    unixtime: str = Field(..., max_length=128)
+class BaseSchema(AuthSchema):
+    ...
