@@ -58,7 +58,7 @@ class Parser:
         """
         try:
             effect = await self._make_request(route=f"/uploads/page/{page}/")
-        except httpx.ConnectError:
+        except (httpx.ConnectError, httpx.ConnectTimeout):
             yield None
 
         soup = BeautifulSoup(effect.text, "lxml")
@@ -72,7 +72,7 @@ class Parser:
         """
         try:
             effect = await self._make_request(route=route)
-        except httpx.ConnectError:
+        except (httpx.ConnectError, httpx.ConnectTimeout):
             yield None
 
         soup = BeautifulSoup(effect.text, "lxml")
@@ -87,7 +87,11 @@ class Parser:
         """
         Get download link
         """
-        effect = await self._make_request(route=route)
+        try:
+            effect = await self._make_request(route=route)
+        except (httpx.ConnectError, httpx.ConnectTimeout):
+            return None
+
         if effect.status_code == 302:
             return await self._download_link(route=effect.headers["location"])
 
@@ -124,11 +128,7 @@ class Parser:
                         break
 
                     await asyncio.sleep(1)
-                    try:
-                        tmp = await self._download_link(route=version_link)
-                    except httpx.ConnectError:
-                        continue
-
+                    tmp = await self._download_link(route=version_link)
                     if tmp is None:
                         continue
 
