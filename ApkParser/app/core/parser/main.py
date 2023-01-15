@@ -42,10 +42,10 @@ class Parser:
         self.__rabbit = rabbit
         self.__queue_download = queue_download
 
-        asyncio.run(self.__rabbit.init_connection())
-
-    def run(self) -> None:
-        asyncio.run(self.__parser())
+    async def run(self) -> None:
+        await self.__rabbit.init_connection()
+        while True:
+            await self.parser()
 
     async def _make_request(self, route: str = "") -> httpx.Response:
         print("{}{}".format(self.__url, route))
@@ -94,7 +94,8 @@ class Parser:
 
         return href
 
-    async def __parser(self) -> None:
+    async def parser(self) -> None:
+        # await self.__rabbit.init_connection
         page = 1
         arr_download: List[str] = []
         while len(arr_download) < self.__link_len:
@@ -128,12 +129,11 @@ class Parser:
             pprint(arr_download)
             page += 1
 
-        arr_download = ["/aa", "/bb"]
-
         arr_download = list(map(lambda x: "{}{}".format(self.__url, x), arr_download))
-        print(arr_download)
 
-        await self.__crud_p.link.batch_create(link=arr_download)
+        async for i in _inner_iterator(arr_download):
+            await self.__crud_p.link.create(link=i)
+
         await self.__rabbit.publish(
             msg=ParserDownloadModel(link=arr_download), queue=self.__queue_download
         )

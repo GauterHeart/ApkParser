@@ -1,5 +1,6 @@
 from app.core.parser import Parser
 from app.pkg.arch import AppABC
+import asyncio
 
 from .app import BaseApp
 
@@ -17,4 +18,4 @@ class ParserV1App(BaseApp, AppABC):
         )
 
     def run(self) -> None:
-        self.__init_app().run()
+        asyncio.run(self.__init_app().run())
