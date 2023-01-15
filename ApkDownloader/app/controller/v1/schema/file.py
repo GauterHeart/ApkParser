@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
+
+from app.core.schema import BaseAuthSchema
 
 
-class FileFetchSchema(BaseModel):
+class FileFetchSchema(BaseAuthSchema):
     link: str = Field(..., max_length=2048)

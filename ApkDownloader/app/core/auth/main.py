@@ -52,10 +52,13 @@ class AuthService:
         if new_signature != signature:
             raise InvalidCredentialException()
 
-    async def validate_id(
-        self, id: str = Header(...), unixtime: str = Header(...)
-    ) -> None:
+    async def validate_id(self, req: Request, id: str = Header(...)) -> None:
 
+        data = await req.json()
+        if "unixtime" not in data:
+            raise InvalidCredentialException()
+
+        unixtime = data["unixtime"]
         if int(unixtime) + LifeCycleNS.UNIXTIME.value < int(time()):
             raise UnixtimeExpiredException()
 
