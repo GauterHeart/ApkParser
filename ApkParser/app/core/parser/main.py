@@ -59,7 +59,7 @@ class Parser:
         try:
             effect = await self._make_request(route=f"/uploads/page/{page}/")
         except httpx.ConnectError:
-            yield ""
+            yield None
 
         soup = BeautifulSoup(effect.text, "lxml")
         e = soup.select("a[class='downloadLink']")
@@ -83,7 +83,7 @@ class Parser:
 
             yield h["href"]
 
-    async def _download_link(self, route: str) -> str:
+    async def _download_link(self, route: str) -> Optional[str]:
         """
         Get download link
         """
@@ -94,7 +94,7 @@ class Parser:
         soup = BeautifulSoup(effect.text, "lxml")
         href = soup.find("a", {"class": "downloadButton"})
         if href is None:
-            return ""
+            return None
 
         href = href["href"]
         if href == "#downloads":
@@ -107,7 +107,6 @@ class Parser:
         return href
 
     async def parser(self) -> None:
-        # await self.__rabbit.init_connection
         page = 1
         arr_download: List[str] = []
         _link_len = self.__link_len
@@ -128,7 +127,9 @@ class Parser:
                     try:
                         tmp = await self._download_link(route=version_link)
                     except httpx.ConnectError:
-                        # arr_download.append("")  # remove(for test)
+                        continue
+
+                    if tmp is None:
                         continue
 
                     arr_download.append(tmp)
@@ -147,4 +148,3 @@ class Parser:
                 del arr_download[:]
 
             page += 1
-
