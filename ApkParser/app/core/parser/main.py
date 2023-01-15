@@ -59,7 +59,7 @@ class Parser:
         try:
             effect = await self._make_request(route=f"/uploads/page/{page}/")
         except (httpx.ConnectError, httpx.ConnectTimeout):
-            yield None
+            return
 
         soup = BeautifulSoup(effect.text, "lxml")
         e = soup.select("a[class='downloadLink']")
@@ -73,7 +73,7 @@ class Parser:
         try:
             effect = await self._make_request(route=route)
         except (httpx.ConnectError, httpx.ConnectTimeout):
-            yield None
+            return
 
         soup = BeautifulSoup(effect.text, "lxml")
         href = soup.find(id="primary").select("a[class='downloadLink']")
