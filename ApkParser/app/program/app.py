@@ -40,8 +40,8 @@ class BaseApp:
         ),
     )
     _rabbit_publisher = RabbitPublisher(
-        dsn=f"amqp://{_config.RABBIT_USER}:{_config.RABBIT_PASSWORD}"
-        + f"@{_config.RABBIT_HOST}:{_config.RABBIT_PORT}/"
+        dsn=f"amqp://{_config.RABBIT_USER}:{_config.RABBIT_PASSWORD}@"
+        + f"{_config.RABBIT_HOST}:{_config.RABBIT_PORT}"
     )
 
     _link_handler = LinkHandler(crud_p=_crud.init_postgres_crud())

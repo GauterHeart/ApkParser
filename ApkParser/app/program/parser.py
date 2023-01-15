@@ -1,6 +1,7 @@
+import asyncio
+
 from app.core.parser import Parser
 from app.pkg.arch import AppABC
-import asyncio
 
 from .app import BaseApp
 
