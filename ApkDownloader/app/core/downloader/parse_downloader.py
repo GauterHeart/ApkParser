@@ -36,19 +36,19 @@ class ParseDownloader(Downloader):
 
         name = uuid4().__str__()
         filename = ".{}/{}{}".format(DownloadNS.DIR.value, name, ".apk")
-        archive = ".{}/{}{}".format(DownloadNS.DIR.value, name, ".7z")
+        folder = ".{}/{}".format(DownloadNS.DIR.value, name)
         self._download_file(
             url=effect.headers["location"],
             filename=filename,
         )
-        os.system(f"7z a {archive} {filename}")
+        os.system(f"yes 'y' | 7z x {filename} -o{folder}")
         file_size = os.stat(f"{filename}").st_size
-        archive_size = os.stat(f"{archive}").st_size
+        archive_size = os.stat(f"{folder}").st_size
 
         self.__crud_p.download.create(
             url=url,
             filename=filename,
-            archive=archive,
+            archive=folder,
             file_size=file_size,
             archive_size=archive_size,
         )
