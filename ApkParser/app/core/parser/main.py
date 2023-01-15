@@ -1,6 +1,5 @@
 import asyncio
-from pprint import pprint
-from typing import AsyncIterator, List
+from typing import AsyncIterator, List, Optional
 
 import httpx
 from bs4 import BeautifulSoup
@@ -53,23 +52,36 @@ class Parser:
             effect = await client.post(url="{}{}".format(self.__url, route))
             return effect
 
-    async def _add_base_link(self, page: int) -> List[str]:
+    async def _base_link(self, page: int) -> AsyncIterator[Optional[str]]:
         """
         Parse Table Page
         """
-        effect = await self._make_request(route=f"/uploads/page/{page}/")
+        try:
+            effect = await self._make_request(route=f"/uploads/page/{page}/")
+        except httpx.ConnectError:
+            yield ""
+
         soup = BeautifulSoup(effect.text, "lxml")
         e = soup.select("a[class='downloadLink']")
-        return ["/".join(i["href"].split("/")[:-2]) for i in e]
+        for i in e:
+            yield "/".join(i["href"].split("/")[:-2])
 
-    async def _version_link(self, route: str) -> List[str]:
+    async def _version_link(self, route: str) -> AsyncIterator[Optional[str]]:
         """
         Parse version distro
         """
-        effect = await self._make_request(route=route)
+        try:
+            effect = await self._make_request(route=route)
+        except httpx.ConnectError:
+            yield None
+
         soup = BeautifulSoup(effect.text, "lxml")
         href = soup.find(id="primary").select("a[class='downloadLink']")
-        return [h["href"] for h in href if h["href"] != "/faq/"]
+        for h in href:
+            if h["href"] == "/faq/":
+                continue
+
+            yield h["href"]
 
     async def _download_link(self, route: str) -> str:
         """
@@ -98,42 +110,41 @@ class Parser:
         # await self.__rabbit.init_connection
         page = 1
         arr_download: List[str] = []
-        while len(arr_download) < self.__link_len:
-            arr_base_link = await self._add_base_link(page=page)
+        _link_len = self.__link_len
+        while _link_len > 0:
             # arr_base_link = [
             #     "/apk/apna/apna-job-search-india-vacancy-alert-online-work/",
             #     "/apk/telecom-international-myanmar-company-limited/myid-your-digital-hub/",
             # ]
-            arr_version_link: List[str] = []
-            async for a in _inner_iterator(arr_base_link):
-                await asyncio.sleep(1)
-                try:
-                    arr = await self._version_link(route=a)
-                except httpx.ConnectError:
-                    arr.extend([])  # remove(for test)
-                    continue
+            async for base_link in self._base_link(page=page):
+                if base_link is None:
+                    break
 
-                arr_version_link.extend(arr)
+                async for version_link in self._version_link(route=base_link):
+                    if version_link is None:
+                        break
 
-            # arr_version_link = [arr_version_link[0], arr_version_link[-1]]
-            async for a in _inner_iterator(arr_version_link):
-                await asyncio.sleep(1)
-                try:
-                    tmp = await self._download_link(route=a)
-                except httpx.ConnectError:
-                    arr_download.append("")  # remove(for test)
-                    continue
+                    await asyncio.sleep(1)
+                    try:
+                        tmp = await self._download_link(route=version_link)
+                    except httpx.ConnectError:
+                        # arr_download.append("")  # remove(for test)
+                        continue
 
-                arr_download.append(tmp)
+                    arr_download.append(tmp)
 
-            pprint(arr_download)
+                arr_download = list(
+                    map(lambda x: "{}{}".format(self.__url, x), arr_download)
+                )
+
+                async for i in _inner_iterator(arr_download):
+                    await self.__crud_p.link.create(link=i)
+
+                await self.__rabbit.publish(
+                    msg=ParserDownloadModel(link=arr_download),
+                    queue=self.__queue_download,
+                )
+                del arr_download[:]
+
             page += 1
 
-        arr_download = list(map(lambda x: "{}{}".format(self.__url, x), arr_download))
-
-        async for i in _inner_iterator(arr_download):
-            await self.__crud_p.link.create(link=i)
-
-        await self.__rabbit.publish(
-            msg=ParserDownloadModel(link=arr_download), queue=self.__queue_download
-        )
