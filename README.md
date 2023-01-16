@@ -14,6 +14,6 @@
 
 ### Файлы с логикой
 
-Html parser = ./ApkParser/app/core/parser/main.py(получение ссылок)
+HtmlParser = ./ApkParser/app/core/parser/main.py(получение ссылок)
 
 Downloader = ./ApkDownloader/app/core/downloader/parse_downloader.py
