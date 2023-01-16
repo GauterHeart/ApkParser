@@ -1,5 +1,6 @@
 from app.controller.v1.schema import DownloadSchema
 from app.core.downloader import Downloader
+from app.core.rabbit.exception import RabbitDownloadException
 
 
 class DownloadHandler:
@@ -8,4 +9,7 @@ class DownloadHandler:
 
     async def execute(self, spell: DownloadSchema) -> None:
         for s in spell.link:
-            self.__downloader.download(url=s)
+            try:
+                self.__downloader.download(url=s)
+            except Exception:
+                raise RabbitDownloadException()

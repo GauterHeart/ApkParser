@@ -88,7 +88,7 @@ class RabbitConsumer:
                                 await self.__status_handler.func_500(
                                     msg=msg, exception=e
                                 )
-                                raise Exception(e.detail)
+                                # raise Exception(e.detail)
 
                             elif e.status_code >= 400:
                                 await self.__status_handler.func_400(
