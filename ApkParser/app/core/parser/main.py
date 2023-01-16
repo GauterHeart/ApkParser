@@ -43,8 +43,7 @@ class Parser:
 
     async def run(self) -> None:
         await self.__rabbit.init_connection()
-        while True:
-            await self.parser()
+        await self.parser()
 
     async def _make_request(self, route: str = "") -> httpx.Response:
         print("{}{}".format(self.__url, route))
@@ -115,10 +114,6 @@ class Parser:
         arr_download: List[str] = []
         _link_len = self.__link_len
         while _link_len > 0:
-            # arr_base_link = [
-            #     "/apk/apna/apna-job-search-india-vacancy-alert-online-work/",
-            #     "/apk/telecom-international-myanmar-company-limited/myid-your-digital-hub/",
-            # ]
             async for base_link in self._base_link(page=page):
                 if base_link is None:
                     break
