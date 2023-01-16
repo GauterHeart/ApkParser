@@ -1,4 +1,4 @@
 from .download import DownloadSchema
-from .file import FileFetchSchema
+from .info import InfoFetchSchema
 
-__all__ = ["DownloadSchema", "FileFetchSchema"]
+__all__ = ["DownloadSchema", "InfoFetchSchema"]

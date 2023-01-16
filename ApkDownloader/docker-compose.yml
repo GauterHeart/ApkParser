@@ -1,0 +1,9 @@
+version: '3.3'
+
+services:
+
+    http:
+      build: .
+      command: poetry run python3 main.py dev http
+      container_name: apk_downloader_http
+      network_mode: "host"

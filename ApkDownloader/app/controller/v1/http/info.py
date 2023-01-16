@@ -2,16 +2,16 @@ from typing import List
 
 from fastapi import APIRouter
 
-from app.controller.v1.handler import FileHandler
-from app.controller.v1.schema import FileFetchSchema
+from app.controller.v1.handler import InfoHandler
+from app.controller.v1.schema import InfoFetchSchema
 from app.model import DownloadModel
 from app.pkg.arch import HttpControllerABC
 
 
-class FileHttpController(HttpControllerABC):
-    router = APIRouter(prefix="/file", tags=["File"])
+class InfoHttpController(HttpControllerABC):
+    router = APIRouter(prefix="/info", tags=["Info"])
 
-    def __init__(self, handler: FileHandler) -> None:
+    def __init__(self, handler: InfoHandler) -> None:
         self.__handler = handler
         self._init_router()
 
@@ -20,6 +20,6 @@ class FileHttpController(HttpControllerABC):
             path="/fetch", endpoint=self.__fetch, methods=["POST"]
         )
 
-    async def __fetch(self, spell: FileFetchSchema) -> List[DownloadModel]:
+    async def __fetch(self, spell: InfoFetchSchema) -> List[DownloadModel]:
         effect = await self.__handler.fetch(spell=spell)
         return effect

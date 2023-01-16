@@ -1,4 +1,4 @@
 from .download import DownloadHandler
-from .file import FileHandler
+from .info import InfoHandler
 
-__all__ = ["DownloadHandler", "FileHandler"]
+__all__ = ["DownloadHandler", "InfoHandler"]

@@ -33,7 +33,7 @@ class HttpApp(BaseApp, AppABC):
 
     def __init_controller_v1(self) -> HttpControllerV1:
         return HttpControllerV1(
-            file_handler=self._file_handler, auth_service=self._auth_service
+            info_handler=self._info_handler, auth_service=self._auth_service
         )
 
     @staticmethod
