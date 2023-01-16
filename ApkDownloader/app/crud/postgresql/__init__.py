@@ -1,4 +1,4 @@
 from .client import ClientCRUD
-from .file import FileCRUD
+from .download import DownloadCRUD
 
-__all__ = ["ClientCRUD", "FileCRUD"]
+__all__ = ["ClientCRUD", "DownloadCRUD"]

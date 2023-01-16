@@ -10,5 +10,5 @@ class InfoHandler:
         self.__crud_p = crud_p
 
     async def fetch(self, spell: InfoFetchSchema) -> List[DownloadModel]:
-        effect = await self.__crud_p.file.fetch(link=spell.link)
+        effect = await self.__crud_p.download.fetch(link=spell.link)
         return effect

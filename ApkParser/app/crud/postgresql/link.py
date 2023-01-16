@@ -16,7 +16,8 @@ class LinkCRUD:
 
     async def fetch(self, link: str) -> List[LinkModel]:
         query = """
-            select * from link where link like $1;
+            select * from link where link like $1
+            order by date_create desc limit 1000;
         """
         effect = await self.__cursor.fetch(query, f"%{link}%")
         return [LinkModel(**e) for e in effect]
