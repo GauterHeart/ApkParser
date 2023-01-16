@@ -4,6 +4,7 @@
 ### Схема работы сервисов
 ![](/static/service.png)
 
+![](/static/service_2.png)
 
 ### Что следует улучшить
 1. Proxy
