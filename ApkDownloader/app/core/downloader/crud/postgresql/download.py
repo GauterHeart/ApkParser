@@ -16,9 +16,9 @@ class DownloadCRUD:
                     file_size,
                     folder_size)
             values(
-                '%(url)s',
-                '%(filename)s',
-                '%(folder)s',
+                %(url)s,
+                %(filename)s,
+                %(folder)s,
                 %(file_size)s,
                 %(folder_size)s);
         """

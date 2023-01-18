@@ -35,26 +35,26 @@ class SyncPostgresql:
     def execute(self, query: str, arg: dict) -> None:
         with self.__create_connector() as conn:
             cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cur.execute(query % arg)
+            cur.execute(query, arg)
             conn.commit()
 
     def get(self, query: str, arg: dict) -> dict:
         with self.__create_connector() as conn:
             cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cur.execute(query % arg)
+            cur.execute(query, arg)
             effect = cur.fetchone()
             return effect
 
     def fetch(self, query: str, arg: dict) -> List[dict]:
         with self.__create_connector() as conn:
             cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cur.execute(query % arg)
+            cur.execute(query, arg)
             effect = cur.fetchall()
             return effect
 
     def fetch_without_factory(self, query: str, arg: dict) -> List[dict]:
         with self.__create_connector() as conn:
             cur = conn.cursor()
-            cur.execute(query % arg)
+            cur.execute(query, arg)
             effect = cur.fetchall()
             return effect
