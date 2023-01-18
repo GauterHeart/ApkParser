@@ -141,3 +141,5 @@ config.json
 key/
 .mypy_cache/
 downloads/
+
+.DS_Store
